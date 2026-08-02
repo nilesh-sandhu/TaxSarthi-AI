@@ -1,0 +1,102 @@
+[
+    {
+        "product": "Laptop",
+        "gst_rate": 18,
+        "category": "Electronics"
+    },
+    {
+        "product": "Mobile Phone",
+        "gst_rate": 18,
+        "category": "Electronics"
+    },
+    {
+        "product": "Television",
+        "gst_rate": 18,
+        "category": "Electronics"
+    },
+    {
+        "product": "Refrigerator",
+        "gst_rate": 18,
+        "category": "Electronics"
+    },
+    {
+        "product": "Washing Machine",
+        "gst_rate": 18,
+        "category": "Electronics"
+    },
+    {
+        "product": "Air Conditioner",
+        "gst_rate": 28,
+        "category": "Electronics"
+    },
+    {
+        "product": "Printer",
+        "gst_rate": 18,
+        "category": "Electronics"
+    },
+    {
+        "product": "Keyboard",
+        "gst_rate": 18,
+        "category": "Electronics"
+    },
+    {
+        "product": "Mouse",
+        "gst_rate": 18,
+        "category": "Electronics"
+    },
+    {
+        "product": "Monitor",
+        "gst_rate": 18,
+        "category": "Electronics"
+    },
+    {
+        "product": "Rice",
+        "gst_rate": 0,
+        "category": "Food"
+    },
+    {
+        "product": "Milk",
+        "gst_rate": 0,
+        "category": "Food"
+    },
+    {
+        "product": "Bread",
+        "gst_rate": 0,
+        "category": "Food"
+    },
+    {
+        "product": "Tea",
+        "gst_rate": 5,
+        "category": "Food"
+    },
+    {
+        "product": "Coffee",
+        "gst_rate": 5,
+        "category": "Food"
+    },
+    {
+        "product": "Sugar",
+        "gst_rate": 5,
+        "category": "Food"
+    },
+    {
+        "product": "Salt",
+        "gst_rate": 0,
+        "category": "Food"
+    },
+    {
+        "product": "Biscuits",
+        "gst_rate": 18,
+        "category": "Food"
+    },
+    {
+        "product": "Restaurant Service",
+        "gst_rate": 5,
+        "category": "Services"
+    },
+    {
+        "product": "Gold",
+        "gst_rate": 3,
+        "category": "Jewellery"
+    }
+]

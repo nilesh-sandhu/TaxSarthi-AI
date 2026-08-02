@@ -1,4 +1,6 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, DateTime
+from datetime import datetime
+
 from core.database import Base
 
 
@@ -6,8 +8,15 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    full_name = Column(String, nullable=False)
-    email = Column(String, unique=True, nullable=False)
-    password = Column(String, nullable=False)
-    mobile = Column(String, nullable=True)
-    role = Column(String, default="user")
+
+    full_name = Column(String(100), nullable=False)
+
+    email = Column(String(100), unique=True, nullable=False, index=True)
+
+    mobile = Column(String(20), unique=True, nullable=False)
+
+    hashed_password = Column(String(255), nullable=False)
+
+    role = Column(String(20), default="user")
+
+    created_at = Column(DateTime, default=datetime.utcnow)

@@ -1,0 +1,52 @@
+[
+    {
+        "product": "Laptop",
+        "hsn": "8471",
+        "gst_rate": 18
+    },
+    {
+        "product": "Mobile Phone",
+        "hsn": "8517",
+        "gst_rate": 18
+    },
+    {
+        "product": "Television",
+        "hsn": "8528",
+        "gst_rate": 18
+    },
+    {
+        "product": "Refrigerator",
+        "hsn": "8418",
+        "gst_rate": 18
+    },
+    {
+        "product": "Air Conditioner",
+        "hsn": "8415",
+        "gst_rate": 28
+    },
+    {
+        "product": "Printer",
+        "hsn": "8443",
+        "gst_rate": 18
+    },
+    {
+        "product": "Rice",
+        "hsn": "1006",
+        "gst_rate": 0
+    },
+    {
+        "product": "Milk",
+        "hsn": "0401",
+        "gst_rate": 0
+    },
+    {
+        "product": "Tea",
+        "hsn": "0902",
+        "gst_rate": 5
+    },
+    {
+        "product": "Gold",
+        "hsn": "7108",
+        "gst_rate": 3
+    }
+]

@@ -1,42 +1,51 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from core.database import SessionLocal
+from core.database import get_db
+from core.jwt import create_access_token
+
+from schemas.user import UserCreate, UserResponse, UserLogin
+from schemas.token import Token
+
+from services.auth import register_user, login_user
+from dependencies.auth import get_current_user
 from models.user import User
-from schemas.user import UserCreate, UserResponse
-
-router = APIRouter(tags=["Authentication"])
-
-
-# Database Session
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+router = APIRouter(
+    prefix="",
+    tags=["Authentication"]
+)
 
 
-# Register User
 @router.post("/register", response_model=UserResponse)
 def register(user: UserCreate, db: Session = Depends(get_db)):
+    return register_user(user, db)
 
-    # Check email already exists
-    existing_user = db.query(User).filter(User.email == user.email).first()
 
-    if existing_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
+@router.post("/login", response_model=Token)
+def login(user: UserLogin, db: Session = Depends(get_db)):
 
-    # Create new user
-    new_user = User(
-        full_name=user.full_name,
-        email=user.email,
-        password=user.password,      # Hashing next step
-        mobile=user.mobile
+    authenticated_user = login_user(
+        user.email,
+        user.password,
+        db
     )
 
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
+    if authenticated_user is None:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid email or password"
+        )
 
-    return new_user
+    access_token = create_access_token(
+        data={
+            "sub": authenticated_user.email
+        }
+    )
+
+    return {
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
+@router.get("/me", response_model=UserResponse)
+def get_me(current_user: User = Depends(get_current_user)):
+    return current_user
