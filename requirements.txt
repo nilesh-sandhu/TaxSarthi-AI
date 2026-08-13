@@ -7,4 +7,5 @@ requests
 plotly
 pandas
 python-dotenv
-google-generativeai
+google-generativeaigoogle-auth==2.56.0 
+google-auth==2.56.0 
