@@ -12,3 +12,4 @@ class RegistrationResponse(BaseModel):
     gst_required: bool
     reason: str
     threshold_limit: float
+    recommendation: str

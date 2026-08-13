@@ -1,399 +1,147 @@
-# TaxSarthi AI
-# Database Design Document
+# Database Design
 
-**Version:** 1.0
+## Database
 
-**Project:** TaxSarthi AI – Intelligent GST & Business Copilot
-
----
-
-# 1. Database Overview
-
-TaxSarthi AI uses a relational database to store user information, GST knowledge, business categories, products, HSN codes, forms, notifications, and AI chat history.
-
-The database is designed to be scalable, secure, and optimized for fast searching.
-
-Database:
-
-- PostgreSQL (Production)
-- SQLite (Development)
+TaxSarthi AI uses **SQLite** as its relational database and **SQLAlchemy ORM** for database operations.
 
 ---
 
-# 2. Entity Relationship Overview
+# Database Tables
 
-Main Entities:
+## 1. User
 
-- Users
-- Products
-- HSN Codes
-- Businesses
-- GST Forms
-- GST Notifications
-- GST Rules
-- AI Conversations
-- Chat Messages
-- Calculator Logs
-- Admin Users
-- Audit Logs
+| Field | Type | Description |
+|--------|------|-------------|
+| id | Integer | Primary Key |
+| username | String | User Name |
+| email | String | Email Address |
+| password | String | Encrypted Password |
 
 ---
 
-# 3. Users Table
+## 2. Business Profile
 
-Table Name:
-
-users
-
-Columns:
-
-- id
-- full_name
-- email
-- password_hash
-- mobile
-- role
-- created_at
-- updated_at
-- last_login
-- is_active
-
-Purpose:
-
-Stores registered users.
+| Field | Type | Description |
+|--------|------|-------------|
+| id | Integer | Primary Key |
+| user_id | Integer | Foreign Key |
+| business_name | String | Business Name |
+| owner_name | String | Owner Name |
+| business_type | String | Business Category |
+| state | String | State |
+| turnover | Float | Annual Turnover |
+| gstin | String | GST Number |
+| registration_type | String | Regular / Composition |
+| created_at | DateTime | Record Creation Time |
 
 ---
 
-# 4. Products Table
+## 3. Product
 
-Table Name:
-
-products
-
-Columns:
-
-- id
-- product_name
-- category
-- gst_rate
-- hsn_code
-- description
-- created_at
-- updated_at
-
-Purpose:
-
-Stores GST products.
+| Field | Type | Description |
+|--------|------|-------------|
+| id | Integer | Primary Key |
+| name | String | Product Name |
+| category | String | Product Category |
+| gst_rate | Float | GST Rate |
+| hsn_code | String | HSN Code |
+| description | String | Product Description |
 
 ---
 
-# 5. HSN Codes Table
+## 4. HSN
 
-Table Name:
-
-hsn_codes
-
-Columns:
-
-- id
-- hsn_code
-- product_name
-- gst_rate
-- chapter
-- description
-
-Purpose:
-
-Stores HSN master database.
+| Field | Type | Description |
+|--------|------|-------------|
+| id | Integer | Primary Key |
+| hsn_code | String | HSN Code |
+| description | String | Product Description |
+| gst_rate | Float | GST Percentage |
+| category | String | Product Category |
 
 ---
 
-# 6. Businesses Table
+## 5. FAQ
 
-Table Name:
-
-businesses
-
-Columns:
-
-- id
-- business_name
-- business_type
-- annual_turnover
-- gst_required
-- registration_threshold
-- required_documents
-- created_at
-
-Purpose:
-
-Stores supported business categories.
+| Field | Type | Description |
+|--------|------|-------------|
+| id | Integer | Primary Key |
+| question | String | GST Question |
+| answer | String | GST Answer |
 
 ---
 
-# 7. GST Forms Table
+## 6. GST Return
 
-Table Name:
-
-gst_forms
-
-Columns:
-
-- id
-- form_name
-- form_number
-- purpose
-- frequency
-- description
-- due_date
-
-Purpose:
-
-Stores GST forms.
+| Field | Type | Description |
+|--------|------|-------------|
+| id | Integer | Primary Key |
+| return_name | String | Return Name |
+| description | String | Return Description |
+| due_date | String | Due Date |
+| frequency | String | Monthly / Quarterly |
+| late_fee | String | Penalty Information |
 
 ---
 
-# 8. Notifications Table
+## 7. Chat History
 
-Table Name:
-
-notifications
-
-Columns:
-
-- id
-- title
-- description
-- category
-- publish_date
-- source
-- status
-
-Purpose:
-
-Stores GST updates and notifications.
+| Field | Type | Description |
+|--------|------|-------------|
+| id | Integer | Primary Key |
+| user_id | Integer | User ID |
+| role | String | User / Assistant |
+| message | Text | Chat Message |
+| created_at | DateTime | Timestamp |
 
 ---
 
-# 9. GST Rules Table
+# Entity Relationship
 
-Table Name:
+```
+User
+ │
+ ├───────────────┐
+ ▼               ▼
+BusinessProfile  ChatHistory
 
-gst_rules
+Product
 
-Columns:
+HSN
 
-- id
-- title
-- category
-- description
-- effective_date
-- reference
+FAQ
 
-Purpose:
-
-Stores GST rules and regulations.
-
----
-
-# 10. AI Conversations Table
-
-Table Name:
-
-conversations
-
-Columns:
-
-- id
-- user_id
-- title
-- created_at
-- updated_at
-
-Purpose:
-
-Stores AI chat sessions.
+GSTReturn
+```
 
 ---
 
-# 11. Chat Messages Table
+# Database Relationships
 
-Table Name:
-
-messages
-
-Columns:
-
-- id
-- conversation_id
-- sender
-- message
-- timestamp
-
-Purpose:
-
-Stores every chat message.
+- One User → One Business Profile
+- One User → Many Chat History Records
+- Product and HSN are linked using the HSN Code.
+- FAQ stores GST-related knowledge.
+- GST Return stores return filing information.
 
 ---
 
-# 12. GST Calculator Logs
+# ORM
 
-Table Name:
+The application uses **SQLAlchemy ORM**, which provides:
 
-calculator_logs
-
-Columns:
-
-- id
-- user_id
-- amount
-- gst_rate
-- gst_amount
-- total_amount
-- created_at
-
-Purpose:
-
-Stores GST calculations.
+- Object Relational Mapping
+- Automatic Table Creation
+- CRUD Operations
+- Query Builder
+- Relationship Management
 
 ---
 
-# 13. Admin Users
+# Advantages of SQLite
 
-Table Name:
-
-admins
-
-Columns:
-
-- id
-- name
-- email
-- password_hash
-- role
-- created_at
-
-Purpose:
-
-Stores administrator accounts.
-
----
-
-# 14. Audit Logs
-
-Table Name:
-
-audit_logs
-
-Columns:
-
-- id
-- admin_id
-- action
-- table_name
-- record_id
-- timestamp
-
-Purpose:
-
-Tracks every admin action.
-
----
-
-# 15. Relationships
-
-Users
-
-↓
-
-Conversations
-
-↓
-
-Messages
-
-Products
-
-↓
-
-HSN Codes
-
-Businesses
-
-↓
-
-GST Rules
-
-Notifications
-
-↓
-
-Users
-
-Admins
-
-↓
-
-Audit Logs
-
----
-
-# 16. Indexing Strategy
-
-Indexes will be created on:
-
-- email
-- product_name
-- hsn_code
-- business_type
-- form_number
-- category
-
-to improve search performance.
-
----
-
-# 17. Future Database Expansion
-
-Future tables:
-
-- GST Return Filing
-- Invoice Generator
-- Payment Gateway
-- OCR Documents
-- AI Feedback
-- User Preferences
-- Saved Searches
-- Bookmarks
-
----
-
-# 18. Database Security
-
-Security measures include:
-
-- Password Hashing
-- JWT Authentication
-- Foreign Keys
-- Cascading Deletes
-- Input Validation
-- Database Backups
-- Role-Based Access Control
-
----
-
-# 19. Estimated Database Size
-
-Version 1:
-
-- 10,000+ Products
-- 5,000+ HSN Codes
-- 500+ Business Categories
-- 100+ GST Forms
-- Unlimited Chat History
-
----
-
-# 20. Conclusion
-
-The TaxSarthi AI database is designed using a modular relational architecture to support future AI capabilities, government API integration, and nationwide scalability.
+- Lightweight
+- Easy Deployment
+- No Separate Database Server
+- Perfect for Educational Projects
+- Fully Compatible with SQLAlchemy

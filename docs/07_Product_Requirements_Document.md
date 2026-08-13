@@ -1,220 +1,228 @@
-# TaxSarthi AI
 # Product Requirements Document (PRD)
 
-**Version:** 1.0
+# Project Name
 
-**Project:** TaxSarthi AI – Intelligent GST & Business Copilot
+**TaxSarthi AI**
 
-Prepared By: Nilesh Sandhu
-
----
-
-# 1. Product Vision
-
-TaxSarthi AI aims to become India's most trusted AI-powered GST and Business Assistant by simplifying tax compliance, business registration, GST learning, and tax-related decision-making through Artificial Intelligence.
+**AI-Powered GST Compliance & Business Assistant**
 
 ---
 
-# 2. Problem Statement
+# Project Vision
 
-Businesses often struggle with:
-
-- Understanding GST rules
-- Finding correct GST rates
-- Searching HSN Codes
-- GST registration process
-- Filing GST returns
-- Understanding GST forms
-- Tracking latest GST updates
-
-Existing government portals provide information but do not provide personalized AI guidance.
-
-TaxSarthi AI bridges this gap.
+TaxSarthi AI aims to simplify GST compliance for Indian businesses by providing an AI-powered assistant capable of answering GST-related queries, searching GST products, calculating GST, advising on registration requirements, and recommending GST returns through an intuitive web interface.
 
 ---
 
-# 3. Target Users
+# Problem Statement
 
-• Small Business Owners
+Small businesses often face challenges in understanding GST regulations, calculating taxes correctly, identifying applicable GST rates, determining registration requirements, and filing GST returns.
 
-• Shopkeepers
-
-• Startups
-
-• MSMEs
-
-• Chartered Accountants
-
-• Tax Consultants
-
-• Students
-
-• Entrepreneurs
-
-• Freelancers
+Existing solutions are either complex, expensive, or lack intelligent assistance.
 
 ---
 
-# 4. Product Goals
+# Proposed Solution
 
-The platform should help users:
-
-- Learn GST
-- Register under GST
-- Search GST Rates
-- Search HSN Codes
-- Understand GST Forms
-- Receive AI Guidance
-- Calculate GST
-- Stay updated with Notifications
+TaxSarthi AI combines Artificial Intelligence with a structured GST knowledge base to provide businesses with accurate GST information through a simple and interactive dashboard.
 
 ---
 
-# 5. Core Features
+# Target Users
 
-### Authentication
-
-- Register
-- Login
-- Forgot Password
-- Profile
-
----
-
-### AI Assistant
-
-- GST Chat
-- Business Guidance
-- Smart Recommendations
-- Context-Aware Responses
+- Small Business Owners
+- Shop Owners
+- Retailers
+- Students
+- Chartered Accountant Trainees
+- GST Learners
+- Startup Founders
 
 ---
 
-### Products
+# Objectives
 
-- Product Search
-- GST Rates
-- Categories
-- HSN Codes
-
----
-
-### Business Guide
-
-- Business Types
-- Registration Eligibility
-- Required Documents
-- Compliance Checklist
+- Provide AI-based GST assistance
+- Simplify GST calculations
+- Improve GST compliance awareness
+- Reduce manual GST searches
+- Centralize GST information
+- Deliver a user-friendly experience
 
 ---
 
-### GST Forms
+# Core Features
 
-- Form Search
-- Filing Guide
-- Form Explanation
+## 1. AI Copilot
+
+- AI-powered GST assistant
+- Context-aware responses
+- Local database verification
+- Chat history
 
 ---
 
-### GST Calculator
+## 2. GST Product Search
+
+Users can search products to view:
+
+- GST Rate
+- HSN Code
+- Category
+- Description
+
+---
+
+## 3. GST Calculator
+
+Supports:
 
 - Inclusive GST
 - Exclusive GST
-- Invoice Calculation
+- CGST
+- SGST
+- IGST
 
 ---
 
-### Dashboard
+## 4. Registration Advisor
 
-- Recent Searches
-- Chat History
-- Notifications
+Checks whether GST registration is required based on:
+
+- Annual Turnover
+- Business Type
+- Interstate Supply
+
+---
+
+## 5. GST Return Advisor
+
+Provides:
+
+- Applicable Returns
+- Filing Frequency
+- Due Dates
 - Recommendations
 
 ---
 
-### Admin Panel
+## 6. Business Profile
 
-- Manage Products
-- Manage Businesses
-- Manage Forms
-- Manage Rules
-- Manage Notifications
+Stores:
 
----
-
-# 6. User Stories
-
-As a business owner,
-
-I want to know whether GST registration is mandatory,
-
-so that I can comply with tax regulations.
+- Business Name
+- Owner Name
+- GSTIN
+- Business Type
+- Turnover
+- Registration Type
 
 ---
 
-As a student,
+## 7. Dashboard
 
-I want to understand GST concepts,
+Displays:
 
-so that I can prepare for exams.
-
----
-
-As a shopkeeper,
-
-I want to know GST on my products,
-
-so that I can charge customers correctly.
+- Business Overview
+- Statistics
+- Business Health
+- Quick Actions
+- Analytics
 
 ---
 
-As a tax consultant,
+# Functional Requirements
 
-I want quick access to GST rules,
-
-so that I can advise clients efficiently.
+- User can search GST products.
+- User can calculate GST.
+- User can create and update business profiles.
+- User can interact with the AI assistant.
+- User can check GST registration eligibility.
+- User can view GST return recommendations.
+- User can access dashboard analytics.
 
 ---
 
-# 7. MVP Scope
+# Non-Functional Requirements
 
-Version 1.0
+### Performance
 
+- Fast API responses
+- Lightweight database
+- Responsive interface
+
+### Security
+
+- Input validation
 - Authentication
-- AI Chat
-- Product Search
-- HSN Search
-- GST Calculator
-- GST Forms
-- Business Guide
-- Notifications
+- Secure API communication
+
+### Reliability
+
+- Stable backend
+- Consistent AI responses
+- Database integrity
+
+### Scalability
+
+Designed for future migration to PostgreSQL and cloud deployment.
 
 ---
 
-# 8. Success Metrics
+# Technology Stack
 
-- Fast response time
-- Accurate GST information
-- User-friendly interface
-- Secure authentication
-- Scalable architecture
+## Frontend
+
+- Streamlit
+
+## Backend
+
+- FastAPI
+
+## Database
+
+- SQLite
+
+## ORM
+
+- SQLAlchemy
+
+## AI
+
+- Google Gemini
+
+## Language
+
+- Python
 
 ---
 
-# 9. Future Vision
+# Success Criteria
 
-Future releases will include:
+The project is considered successful if users can:
 
-- Government API Integration
-- OCR Invoice Scanner
+- Search GST information
+- Receive AI-powered assistance
+- Calculate GST accurately
+- Check GST registration eligibility
+- View GST return recommendations
+- Manage business profiles efficiently
+
+---
+
+# Future Scope
+
+- OCR Invoice Reader
 - Voice Assistant
-- Invoice Generator
+- GST Notification Center
 - Mobile Application
-- AI Compliance Monitoring
+- Multi-user Support
+- PDF Report Generation
+- Cloud Deployment
+- Business Analytics Dashboard
 
 ---
 
-# 10. Conclusion
+# Conclusion
 
-TaxSarthi AI is envisioned as a modern AI-powered GST platform that combines intelligent assistance, structured tax knowledge, and an intuitive user experience to simplify GST compliance for businesses and individuals across India.
+TaxSarthi AI is designed as an intelligent GST compliance platform that integrates Artificial Intelligence with modern web technologies to simplify GST-related tasks for businesses and learners. The system focuses on usability, scalability, and practical applicability while providing a foundation for future enhancements.

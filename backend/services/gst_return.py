@@ -1,108 +1,134 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
-from models.gst_form import GSTForm
-from schemas.gst_form import (
-    GSTFormCreate,
-    GSTFormUpdate,
+from models.gst_return import GSTReturn
+from schemas.gst_return import (
+    GSTReturnCreate,
+    GSTReturnUpdate,
 )
 
 
-def create_form(data: GSTFormCreate, db: Session):
+# -----------------------------
+# Create Return
+# -----------------------------
+def create_return(data: GSTReturnCreate, db: Session):
 
-    form = GSTForm(
-        form_name=data.form_name,
-        purpose=data.purpose,
-        applicability=data.applicability,
+    new_return = GSTReturn(
+        return_name=data.return_name,
         description=data.description,
+        due_date=data.due_date,
+        frequency=data.frequency,
+        late_fee=data.late_fee,
     )
 
-    db.add(form)
+    db.add(new_return)
     db.commit()
-    db.refresh(form)
+    db.refresh(new_return)
 
-    return form
-
-
-def get_forms(db: Session):
-
-    return db.query(GSTForm).all()
+    return new_return
 
 
-def get_form(form_id: int, db: Session):
+# -----------------------------
+# Get All Returns
+# -----------------------------
+def get_returns(db: Session):
 
-    form = db.query(GSTForm).filter(
-        GSTForm.id == form_id
-    ).first()
-
-    if not form:
-        raise HTTPException(
-            status_code=404,
-            detail="GST Form not found."
-        )
-
-    return form
+    return db.query(GSTReturn).all()
 
 
-def search_form(name: str, db: Session):
+# -----------------------------
+# Get Return By ID
+# -----------------------------
+def get_return(return_id: int, db: Session):
 
-    form = (
-        db.query(GSTForm)
-        .filter(GSTForm.form_name.ilike(f"%{name}%"))
+    gst_return = (
+        db.query(GSTReturn)
+        .filter(GSTReturn.id == return_id)
         .first()
     )
 
-    if not form:
+    if not gst_return:
         raise HTTPException(
             status_code=404,
-            detail="GST Form not found."
+            detail="GST Return not found."
         )
 
-    return form
+    return gst_return
 
 
-def update_form(
-    form_id: int,
-    data: GSTFormUpdate,
+# -----------------------------
+# Search Return
+# -----------------------------
+def search_return(name: str, db: Session):
+
+    gst_return = (
+        db.query(GSTReturn)
+        .filter(GSTReturn.return_name.ilike(f"%{name}%"))
+        .first()
+    )
+
+    if not gst_return:
+        raise HTTPException(
+            status_code=404,
+            detail="GST Return not found."
+        )
+
+    return gst_return
+
+
+# -----------------------------
+# Update Return
+# -----------------------------
+def update_return(
+    return_id: int,
+    data: GSTReturnUpdate,
     db: Session,
 ):
 
-    form = db.query(GSTForm).filter(
-        GSTForm.id == form_id
-    ).first()
+    gst_return = (
+        db.query(GSTReturn)
+        .filter(GSTReturn.id == return_id)
+        .first()
+    )
 
-    if not form:
+    if not gst_return:
         raise HTTPException(
             status_code=404,
-            detail="GST Form not found."
+            detail="GST Return not found."
         )
 
-    form.form_name = data.form_name
-    form.purpose = data.purpose
-    form.applicability = data.applicability
-    form.description = data.description
+    gst_return.return_name = data.return_name
+    gst_return.description = data.description
+    gst_return.due_date = data.due_date
+    gst_return.frequency = data.frequency
+    gst_return.late_fee = data.late_fee
 
     db.commit()
-    db.refresh(form)
+    db.refresh(gst_return)
 
-    return form
+    return gst_return
 
 
-def delete_form(form_id: int, db: Session):
+# -----------------------------
+# Delete Return
+# -----------------------------
+def delete_return(return_id: int, db: Session):
 
-    form = db.query(GSTForm).filter(
-        GSTForm.id == form_id
-    ).first()
+    gst_return = (
+        db.query(GSTReturn)
+        .filter(GSTReturn.id == return_id)
+        .first()
+    )
 
-    if not form:
+    if not gst_return:
         raise HTTPException(
             status_code=404,
-            detail="GST Form not found."
+            detail="GST Return not found."
         )
 
-    db.delete(form)
+    db.delete(gst_return)
     db.commit()
 
     return {
-        "message": "GST Form deleted successfully."
+        "message": "GST Return deleted successfully."
     }

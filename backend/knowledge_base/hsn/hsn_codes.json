@@ -1,0 +1,23 @@
+[
+  {
+    "hsn_code": "8471",
+    "product_name": "Laptop",
+    "category": "Electronics",
+    "gst_rate": 18,
+    "description": "Portable computers"
+  },
+  {
+    "hsn_code": "8517",
+    "product_name": "Mobile Phone",
+    "category": "Electronics",
+    "gst_rate": 18,
+    "description": "Smartphones and mobile phones"
+  },
+  {
+    "hsn_code": "1006",
+    "product_name": "Rice",
+    "category": "Food",
+    "gst_rate": 0,
+    "description": "Unbranded rice"
+  }
+]

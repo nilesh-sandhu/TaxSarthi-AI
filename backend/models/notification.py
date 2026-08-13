@@ -1,22 +1,130 @@
-from sqlalchemy import Column, Integer, String, DateTime
 from datetime import datetime
+
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+)
+
+from sqlalchemy.orm import relationship
 
 from core.database import Base
 
 
 class Notification(Base):
+
     __tablename__ = "notifications"
 
-    id = Column(Integer, primary_key=True, index=True)
+    # =====================================================
+    # Primary Key
+    # =====================================================
 
-    notification_no = Column(String(100), unique=True, nullable=False)
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True,
+    )
 
-    title = Column(String(500), nullable=False)
+    # =====================================================
+    # Optional Business Mapping
+    # =====================================================
 
-    summary = Column(String(2000), nullable=False)
+    business_id = Column(
+        Integer,
+        ForeignKey("business_profiles.id"),
+        nullable=True,
+        index=True,
+    )
 
-    issue_date = Column(String(100), nullable=False)
+    # =====================================================
+    # Government Notification Details
+    # =====================================================
 
-    pdf_link = Column(String(1000), nullable=True)
+    title = Column(
+        String(255),
+        nullable=False,
+    )
 
-    created_at = Column(DateTime, default=datetime.utcnow)
+    message = Column(
+        Text,
+        nullable=False,
+    )
+
+    notification_number = Column(
+        String(100),
+        nullable=True,
+    )
+
+    notification_date = Column(
+        DateTime,
+        nullable=True,
+    )
+
+    type = Column(
+        String(50),
+        nullable=False,
+    )  # GST | Income Tax | Customs | General
+
+    priority = Column(
+        String(20),
+        default="Medium",
+        nullable=False,
+    )
+
+    source = Column(
+        String(255),
+        default="CBIC",
+        nullable=False,
+    )
+
+    applicable_to = Column(
+        String(255),
+        nullable=True,
+    )  # Electronics, Restaurant, Textile etc.
+
+    is_active = Column(
+        Boolean,
+        default=True,
+        nullable=False,
+    )
+
+    expires_at = Column(
+        DateTime,
+        nullable=True,
+    )
+
+    created_at = Column(
+        DateTime,
+        default=datetime.utcnow,
+        nullable=False,
+    )
+
+    updated_at = Column(
+        DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow,
+        nullable=False,
+    )
+
+    # =====================================================
+    # Relationships
+    # =====================================================
+
+    business = relationship(
+        "BusinessProfile",
+        lazy="joined",
+    )
+
+    # =====================================================
+    # Representation
+    # =====================================================
+
+    def __repr__(self):
+
+        return (
+            f"<Notification(id={self.id}, title='{self.title}')>"
+        )

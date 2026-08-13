@@ -1,122 +1,164 @@
 from sqlalchemy.orm import Session
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 
 from models.faq import FAQ
 from schemas.faq import FAQCreate, FAQUpdate
 
 
-# -----------------------------
+# ==========================================================
 # Create FAQ
-# -----------------------------
-def create_faq(faq: FAQCreate, db: Session):
+# ==========================================================
+
+def create_faq(
+    faq: FAQCreate,
+    db: Session,
+):
+
+    existing = (
+        db.query(FAQ)
+        .filter(FAQ.question == faq.question)
+        .first()
+    )
+
+    if existing:
+
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="FAQ already exists.",
+        )
 
     new_faq = FAQ(
         question=faq.question,
         answer=faq.answer,
-        category=faq.category,
     )
 
     db.add(new_faq)
+
     db.commit()
+
     db.refresh(new_faq)
 
     return new_faq
 
 
-# -----------------------------
-# Get All FAQ
-# -----------------------------
-def get_all_faq(db: Session):
+# ==========================================================
+# Get All FAQs
+# ==========================================================
+
+def get_all_faq(
+    db: Session,
+):
 
     return db.query(FAQ).all()
 
 
-# -----------------------------
+# ==========================================================
 # Get FAQ By ID
-# -----------------------------
-def get_faq(faq_id: int, db: Session):
+# ==========================================================
 
-    faq = db.query(FAQ).filter(
-        FAQ.id == faq_id
-    ).first()
-
-    if not faq:
-        raise HTTPException(
-            status_code=404,
-            detail="FAQ not found."
-        )
-
-    return faq
-
-
-# -----------------------------
-# Search FAQ
-# -----------------------------
-def search_faq(question: str, db: Session):
+def get_faq(
+    faq_id: int,
+    db: Session,
+):
 
     faq = (
         db.query(FAQ)
-        .filter(FAQ.question.ilike(f"%{question}%"))
+        .filter(FAQ.id == faq_id)
         .first()
     )
 
-    if not faq:
+    if faq is None:
+
         raise HTTPException(
-            status_code=404,
-            detail="FAQ not found."
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="FAQ not found.",
         )
 
     return faq
 
 
-# -----------------------------
+# ==========================================================
+# Search FAQ
+# ==========================================================
+
+def search_faq(
+    question: str,
+    db: Session,
+):
+
+    faq = (
+        db.query(FAQ)
+        .filter(
+            FAQ.question.ilike(f"%{question}%")
+        )
+        .all()
+    )
+
+    return faq
+
+
+# ==========================================================
 # Update FAQ
-# -----------------------------
+# ==========================================================
+
 def update_faq(
     faq_id: int,
     faq: FAQUpdate,
     db: Session,
 ):
 
-    existing = db.query(FAQ).filter(
-        FAQ.id == faq_id
-    ).first()
+    existing = (
+        db.query(FAQ)
+        .filter(FAQ.id == faq_id)
+        .first()
+    )
 
-    if not existing:
+    if existing is None:
+
         raise HTTPException(
-            status_code=404,
-            detail="FAQ not found."
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="FAQ not found.",
         )
 
-    existing.question = faq.question
-    existing.answer = faq.answer
-    existing.category = faq.category
+    update_data = faq.model_dump(
+        exclude_unset=True
+    )
+
+    for key, value in update_data.items():
+
+        setattr(existing, key, value)
 
     db.commit()
+
     db.refresh(existing)
 
     return existing
 
 
-# -----------------------------
+# ==========================================================
 # Delete FAQ
-# -----------------------------
+# ==========================================================
+
 def delete_faq(
     faq_id: int,
     db: Session,
 ):
 
-    faq = db.query(FAQ).filter(
-        FAQ.id == faq_id
-    ).first()
+    faq = (
+        db.query(FAQ)
+        .filter(FAQ.id == faq_id)
+        .first()
+    )
 
-    if not faq:
+    if faq is None:
+
         raise HTTPException(
-            status_code=404,
-            detail="FAQ not found."
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="FAQ not found.",
         )
 
     db.delete(faq)
+
     db.commit()
 
     return {

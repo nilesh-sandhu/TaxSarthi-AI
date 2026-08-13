@@ -1,305 +1,193 @@
-# TaxSarthi AI
 # Development Roadmap
 
-**Version:** 1.0
+# Project Overview
 
-**Project:** TaxSarthi AI – Intelligent GST & Business Copilot
-
----
-
-# 1. Project Vision
-
-TaxSarthi AI aims to become India's most intelligent AI-powered GST and Business Assistance Platform by combining Artificial Intelligence, GST knowledge, business guidance, and a modern web application into a single ecosystem.
+TaxSarthi AI was developed to simplify GST compliance for businesses using Artificial Intelligence and modern web technologies. The project followed a structured development approach from planning to deployment.
 
 ---
 
-# 2. Development Strategy
+# Phase 1 – Requirement Analysis
 
-The project will follow Agile Development with milestone-based delivery.
+### Objectives
 
-Each module will pass through:
+- Build an AI-powered GST Assistant
+- Provide accurate GST information
+- Assist businesses with GST registration
+- Automate GST calculations
+- Improve user experience
 
-Requirement Analysis
+### Deliverables
 
-↓
-
-Database Design
-
-↓
-
-API Design
-
-↓
-
-Backend Development
-
-↓
-
-Frontend Development
-
-↓
-
-Testing
-
-↓
-
-Documentation
-
-↓
-
-Deployment
+- Requirement Analysis
+- Feature List
+- Technology Selection
 
 ---
 
-# 3. Development Phases
+# Phase 2 – System Design
 
-## Phase 1
+### Activities
 
-Project Foundation
+- Database Design
+- API Planning
+- UI Wireframes
+- Folder Structure
+- Architecture Design
 
-Deliverables
+### Deliverables
 
-- Project Structure
-- FastAPI Setup
+- ER Diagram
+- Architecture Diagram
+- API Blueprint
+
+---
+
+# Phase 3 – Backend Development
+
+### Technologies
+
+- FastAPI
+- SQLAlchemy
+- SQLite
+- Pydantic
+
+### Modules Developed
+
 - Authentication
-- Database
-- Git Repository
-
-Status
-
-Completed
-
----
-
-## Phase 2
-
-Authentication Module
-
-Deliverables
-
-- Register
-- Login
-- JWT
-- Password Hashing
-- User Profile
-
-Estimated Time
-
-2 Days
-
----
-
-## Phase 3
-
-GST Knowledge Base
-
-Deliverables
-
-- Products
-- GST Rates
-- HSN Codes
-- GST Rules
-- Business Categories
-
-Estimated Time
-
-3 Days
-
----
-
-## Phase 4
-
-GST Services
-
-Deliverables
-
+- Product Management
+- HSN Management
+- FAQ Management
+- GST Returns
+- Business Profile
+- Registration Advisor
 - GST Calculator
-- GST Forms
-- Registration Guide
-- Eligibility Checker
-
-Estimated Time
-
-3 Days
+- AI Assistant
+- Dashboard APIs
 
 ---
 
-## Phase 5
+# Phase 4 – AI Integration
 
-AI Assistant
+### Technologies
 
-Deliverables
+- Google Gemini AI
+- Prompt Engineering
 
-- AI Chat
-- Smart Search
-- Conversation History
-- Recommendations
+### Features
 
-Estimated Time
-
-4 Days
+- GST Question Answering
+- Context-Based Responses
+- Database Verification
+- AI Knowledge Fallback
 
 ---
 
-## Phase 6
+# Phase 5 – Frontend Development
 
-Frontend
+### Technology
 
-Deliverables
+- Streamlit
+
+### Pages
 
 - Landing Page
 - Dashboard
-- AI Chat UI
-- Products
-- Forms
-- Calculator
-
-Estimated Time
-
-5 Days
-
----
-
-## Phase 7
-
-Admin Panel
-
-Deliverables
-
-- Manage Products
-- Manage Businesses
-- Manage Rules
-- Manage Notifications
-- User Management
-
-Estimated Time
-
-4 Days
-
----
-
-## Phase 8
-
-Deployment
-
-Deliverables
-
-- Docker
-- PostgreSQL
-- Render
-- Vercel
-- Production Environment
-
-Estimated Time
-
-2 Days
-
----
-
-# 4. Testing Strategy
-
-Testing Levels
-
-- Unit Testing
-- API Testing
-- Integration Testing
-- UI Testing
-- Performance Testing
-
-Tools
-
-- Pytest
-- Swagger
-- Postman
-
----
-
-# 5. Version Roadmap
-
-## Version 1.0
-
-Core Features
-
-- Authentication
-- Products
-- HSN Search
-- Business Guide
+- AI Copilot
+- GST Search
+- Registration Advisor
 - GST Calculator
+- GST Return Advisor
+- Business Profile
+- About
+
+---
+
+# Phase 6 – UI Enhancement
+
+### Improvements
+
+- Sidebar Navigation
+- Footer
+- Professional Theme
+- Dashboard Cards
+- Charts
+- Business Health Score
+
+---
+
+# Phase 7 – Testing
+
+### Functional Testing
+
 - AI Chat
+- Product Search
+- GST Calculator
+- Registration Advisor
+- Return Advisor
 - Dashboard
+- Business Profile
+
+### API Testing
+
+- Swagger UI
+- FastAPI Validation
 
 ---
 
-## Version 2.0
+# Phase 8 – Documentation
 
-New Features
+Prepared
 
-- Government API Integration
-- OCR Invoice Scanner
+- SRS
+- Architecture
+- Database Design
+- API Documentation
+- UI/UX Documentation
+- Development Roadmap
+- Product Requirements
+
+---
+
+# Phase 9 – Deployment (Future)
+
+Deployment Targets
+
+- Render
+- Railway
+- Azure
+- Docker
+
+---
+
+# Timeline
+
+| Phase | Status |
+|--------|--------|
+| Requirement Analysis | ✅ Completed |
+| System Design | ✅ Completed |
+| Backend Development | ✅ Completed |
+| AI Integration | ✅ Completed |
+| Frontend Development | ✅ Completed |
+| UI Enhancement | ✅ Completed |
+| Testing | 🔄 In Progress |
+| Documentation | 🔄 In Progress |
+| Deployment | ⏳ Future |
+
+---
+
+# Future Enhancements
+
+- OCR-based GST Invoice Reader
 - Voice Assistant
-- AI Recommendations
-- Analytics
-
----
-
-## Version 3.0
-
-Enterprise Features
-
-- Multi-user Organizations
-- Team Collaboration
-- Advanced Reports
-- AI Compliance Monitoring
+- GST Notification Center
 - Mobile Application
+- Multi-user Support
+- Cloud Deployment
+- Advanced Business Analytics
+- PDF Report Generation
 
 ---
 
-# 6. Risks
+# Conclusion
 
-Potential Risks
-
-- Frequent GST rule changes
-- AI response accuracy
-- Government API availability
-- Large product dataset management
-
-Mitigation
-
-- Modular knowledge base
-- Admin dashboard updates
-- Version-controlled content
-- Regular testing
-
----
-
-# 7. Success Metrics
-
-The project will be considered successful if it:
-
-- Provides accurate GST guidance
-- Delivers fast AI responses
-- Supports thousands of products
-- Has a responsive UI
-- Maintains secure authentication
-- Offers an intuitive user experience
-
----
-
-# 8. Future Scope
-
-Future enhancements include:
-
-- AI-powered GST filing assistance
-- Invoice generation
-- Multi-language support
-- Mobile application
-- Voice interaction
-- OCR document analysis
-- Personalized business recommendations
-- AI compliance monitoring
-
----
-
-# 9. Conclusion
-
-TaxSarthi AI is envisioned as a scalable, AI-driven GST platform that simplifies GST compliance, improves accessibility to tax information, and provides intelligent guidance for businesses, professionals, and students across India.
+The development of TaxSarthi AI followed a structured software development lifecycle (SDLC), ensuring a scalable, maintainable, and user-friendly application. The project integrates AI with GST compliance to provide intelligent assistance for businesses and demonstrates the practical application of FastAPI, Streamlit, SQLite, SQLAlchemy, and Google Gemini AI.

@@ -1,0 +1,11 @@
+product_name,aliases,gst_rate,hsn_code,category
+Laptop,laptop|computer|notebook|pc,18,8471,Electronics
+Mobile Phone,mobile|phone|smartphone|iphone|android,18,8517,Electronics
+Television,tv|television|smart tv|led tv,18,8528,Electronics
+Refrigerator,fridge|refrigerator,18,8418,Home Appliances
+Air Conditioner,ac|air conditioner|split ac|window ac,28,8415,Home Appliances
+Washing Machine,washing machine|washer,18,8450,Home Appliances
+Printer,printer|laser printer|inkjet printer,18,8443,Electronics
+Keyboard,keyboard,18,8471,Electronics
+Mouse,mouse,18,8471,Electronics
+Monitor,monitor|display,18,8528,Electronics

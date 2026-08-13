@@ -1,24 +1,24 @@
 # Python
 __pycache__/
 *.py[cod]
-*.pyo
 
-# Virtual Environment
-venv/
-.venv/
-env/
-backend/venv/
+# Environment
+.env
+.env.*
+!.env.example
 
-# Database
-*.db
+# Frontend
+frontend/node_modules/
+frontend/.next/
+
+# Local runtime
+backend/uploads/
+backend/taxsarthi.db
+*.sqlite
 *.sqlite3
 
-# Environment Variables
-.env
+# Archives
+*.zip
 
-# VS Code
-.vscode/
-
-# OS Files
-.DS_Store
-Thumbs.db
+# Logs
+*.log

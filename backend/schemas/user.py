@@ -2,33 +2,48 @@ from pydantic import BaseModel, EmailStr
 from datetime import datetime
 
 
-# -----------------------------
-# User Registration
-# -----------------------------
+# ============================
+# Register
+# ============================
+
 class UserCreate(BaseModel):
+
     full_name: str
+
     email: EmailStr
+
     mobile: str
+
     password: str
 
 
-# -----------------------------
-# User Login
-# -----------------------------
+# ============================
+# Login
+# ============================
+
 class UserLogin(BaseModel):
+
     email: EmailStr
+
     password: str
 
 
-# -----------------------------
-# User Response
-# -----------------------------
+# ============================
+# Response
+# ============================
+
 class UserResponse(BaseModel):
+
     id: int
+
     full_name: str
-    email: EmailStr
+
+    email: str
+
     mobile: str
+
     role: str
+
     created_at: datetime
 
     class Config:

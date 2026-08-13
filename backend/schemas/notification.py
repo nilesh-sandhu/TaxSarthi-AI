@@ -1,31 +1,53 @@
-from pydantic import BaseModel
 from datetime import datetime
+from typing import Optional
+
+from pydantic import BaseModel, ConfigDict
 
 
-class NotificationCreate(BaseModel):
-    notification_no: str
+class NotificationBase(BaseModel):
+
+    business_id: Optional[int] = None
+
     title: str
-    summary: str
-    issue_date: str
-    pdf_link: str | None = None
+
+    message: str
+
+    type: str
+
+    priority: str = "Medium"
+
+    expires_at: Optional[datetime] = None
+
+
+class NotificationCreate(NotificationBase):
+    pass
 
 
 class NotificationUpdate(BaseModel):
-    notification_no: str
-    title: str
-    summary: str
-    issue_date: str
-    pdf_link: str | None = None
+
+    title: Optional[str] = None
+
+    message: Optional[str] = None
+
+    priority: Optional[str] = None
+
+    is_read: Optional[bool] = None
+
+    expires_at: Optional[datetime] = None
 
 
-class NotificationResponse(BaseModel):
+class NotificationResponse(NotificationBase):
+
     id: int
-    notification_no: str
-    title: str
-    summary: str
-    issue_date: str
-    pdf_link: str | None
+
+    user_id: int
+
+    is_read: bool
+
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    updated_at: datetime
+
+    model_config = ConfigDict(
+        from_attributes=True
+    )
