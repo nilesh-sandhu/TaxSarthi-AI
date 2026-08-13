@@ -1,11 +1,101 @@
-product_name,aliases,gst_rate,hsn_code,category
-Laptop,laptop|computer|notebook|pc,18,8471,Electronics
-Mobile Phone,mobile|phone|smartphone|iphone|android,18,8517,Electronics
-Television,tv|television|smart tv|led tv,18,8528,Electronics
-Refrigerator,fridge|refrigerator,18,8418,Home Appliances
-Air Conditioner,ac|air conditioner|split ac|window ac,28,8415,Home Appliances
-Washing Machine,washing machine|washer,18,8450,Home Appliances
-Printer,printer|laser printer|inkjet printer,18,8443,Electronics
-Keyboard,keyboard,18,8471,Electronics
-Mouse,mouse,18,8471,Electronics
-Monitor,monitor|display,18,8528,Electronics
+﻿product_id,product_name,category,hsn_code,gst_rate,description,keywords,data_type
+DEMO001,Laptop,Electronics,8471,18,Portable computer / automatic data processing machine,"electronics, laptop",DEMO_MASTER
+DEMO002,Desktop Computer,Electronics,8471,18,Desktop personal computer,"electronics, desktopcomputer, desktop computer",DEMO_MASTER
+DEMO003,Computer Workstation,Electronics,8471,18,High-performance computer workstation,"electronics, computer workstation, computerworkstation",DEMO_MASTER
+DEMO004,Tablet,Electronics,8471,18,Tablet computer,"tablet, electronics",DEMO_MASTER
+DEMO005,Computer Monitor,Electronics,8528,18,Computer monitor/display,"electronics, computermonitor, computer monitor",DEMO_MASTER
+DEMO006,LED Television,Electronics,8528,18,Television receiver with LED display,"electronics, ledtelevision, led television",DEMO_MASTER
+DEMO007,Smart Television,Electronics,8528,18,Smart television,"electronics, smarttelevision, smart television",DEMO_MASTER
+DEMO008,Projector,Electronics,8528,18,Image/video projector,"electronics, projector",DEMO_MASTER
+DEMO009,Keyboard,Computer Accessories,8471,18,Computer keyboard,"keyboard, computer accessories",DEMO_MASTER
+DEMO010,Computer Mouse,Computer Accessories,8471,18,Computer mouse,"computer accessories, computer mouse, computermouse",DEMO_MASTER
+DEMO011,Webcam,Computer Accessories,8525,18,Digital camera/web camera,"webcam, computer accessories",DEMO_MASTER
+DEMO012,Printer,Computer Accessories,8443,18,Computer printer,"printer, computer accessories",DEMO_MASTER
+DEMO013,Scanner,Computer Accessories,8471,18,Computer scanner,"scanner, computer accessories",DEMO_MASTER
+DEMO014,Router,Networking,8517,18,Network router,"networking, router",DEMO_MASTER
+DEMO015,Wi-Fi Access Point,Networking,8517,18,Wireless network access point,"wi-fiaccesspoint, networking, wi-fi access point",DEMO_MASTER
+DEMO016,Network Switch,Networking,8517,18,Network switching equipment,"network switch, networking, networkswitch",DEMO_MASTER
+DEMO017,Mobile Phone,Telecom,8517,18,Mobile/cellular telephone,"mobile phone, telecom, mobilephone",DEMO_MASTER
+DEMO018,Smartphone,Telecom,8517,18,Smart mobile phone,"telecom, smartphone",DEMO_MASTER
+DEMO019,Landline Telephone,Telecom,8517,18,Telephone set,"landline telephone, telecom, landlinetelephone",DEMO_MASTER
+DEMO020,Bluetooth Speaker,Audio,8518,18,Portable loudspeaker,"bluetoothspeaker, audio, bluetooth speaker",DEMO_MASTER
+DEMO021,Headphones,Audio,8518,18,Headphones/earphones,"audio, headphones",DEMO_MASTER
+DEMO022,Earbuds,Audio,8518,18,Wireless earphones,"audio, earbuds",DEMO_MASTER
+DEMO023,Microphone,Audio,8518,18,Audio microphone,"audio, microphone",DEMO_MASTER
+DEMO024,Audio Amplifier,Audio,8518,18,Audio-frequency amplifier,"audioamplifier, audio, audio amplifier",DEMO_MASTER
+DEMO025,Digital Camera,Cameras,8525,18,Digital camera,"digital camera, digitalcamera, cameras",DEMO_MASTER
+DEMO026,Video Camera,Cameras,8525,18,Video recording camera,"videocamera, cameras, video camera",DEMO_MASTER
+DEMO027,CCTV Camera,Security,8525,18,Security camera,"security, cctv camera, cctvcamera",DEMO_MASTER
+DEMO028,Set Top Box,Telecom,8528,18,Television signal receiver,"set top box, telecom, settopbox",DEMO_MASTER
+DEMO029,USB Flash Drive,Storage,8523,18,Solid-state data storage device,"usbflashdrive, usb flash drive, storage",DEMO_MASTER
+DEMO030,Memory Card,Storage,8523,18,Solid-state memory card,"memory card, storage, memorycard",DEMO_MASTER
+DEMO031,Refrigerator,Home Appliances,8418,18,Electric household refrigerator,"home appliances, refrigerator",DEMO_MASTER
+DEMO032,Deep Freezer,Home Appliances,8418,18,Freezing equipment,"home appliances, deep freezer, deepfreezer",DEMO_MASTER
+DEMO033,Air Conditioner,Home Appliances,8415,28,Air-conditioning machine,"air conditioner, home appliances, airconditioner",DEMO_MASTER
+DEMO034,Split AC,Home Appliances,8415,28,Split air-conditioning machine,"split ac, home appliances, splitac",DEMO_MASTER
+DEMO035,Washing Machine,Home Appliances,8450,18,Household washing machine,"washingmachine, home appliances, washing machine",DEMO_MASTER
+DEMO036,Dishwasher,Home Appliances,8422,18,Household dishwashing machine,"dishwasher, home appliances",DEMO_MASTER
+DEMO037,Microwave Oven,Home Appliances,8516,18,Electric microwave oven,"home appliances, microwave oven, microwaveoven",DEMO_MASTER
+DEMO038,Electric Oven,Home Appliances,8516,18,Electric cooking oven,"home appliances, electric oven, electricoven",DEMO_MASTER
+DEMO039,Electric Iron,Home Appliances,8516,18,Electric smoothing iron,"home appliances, electric iron, electriciron",DEMO_MASTER
+DEMO040,Hair Dryer,Personal Care,8516,18,Electric hair dryer,"personal care, hairdryer, hair dryer",DEMO_MASTER
+DEMO041,Electric Water Heater,Home Appliances,8516,18,Electric water heater,"electricwaterheater, electric water heater, home appliances",DEMO_MASTER
+DEMO042,Vacuum Cleaner,Home Appliances,8508,18,Electric vacuum cleaner,"vacuum cleaner, home appliances, vacuumcleaner",DEMO_MASTER
+DEMO043,Mixer Grinder,Kitchen Appliances,8509,18,Domestic electro-mechanical appliance,"mixergrinder, mixer grinder, kitchen appliances",DEMO_MASTER
+DEMO044,Juicer,Kitchen Appliances,8509,18,Domestic juice extractor,"juicer, kitchen appliances",DEMO_MASTER
+DEMO045,Electric Kettle,Kitchen Appliances,8516,18,Electric water kettle,"kitchen appliances, electrickettle, electric kettle",DEMO_MASTER
+DEMO046,Toaster,Kitchen Appliances,8516,18,Electric toaster,"toaster, kitchen appliances",DEMO_MASTER
+DEMO047,Room Heater,Home Appliances,8516,18,Electric space heating appliance,"home appliances, roomheater, room heater",DEMO_MASTER
+DEMO048,Electric Fan,Home Appliances,8414,18,Electric fan,"home appliances, electricfan, electric fan",DEMO_MASTER
+DEMO049,Air Cooler,Home Appliances,8415,18,Air cooling equipment,"air cooler, home appliances, aircooler",DEMO_MASTER
+DEMO050,Water Purifier,Home Appliances,8421,18,Water filtration/purification equipment,"water purifier, home appliances, waterpurifier",DEMO_MASTER
+DEMO051,Plastic Chair,Furniture,9401,18,Plastic seating furniture,"plastic chair, plasticchair, furniture",DEMO_MASTER
+DEMO052,Office Chair,Furniture,9401,18,Office chair,"office chair, furniture, officechair",DEMO_MASTER
+DEMO053,Dining Chair,Furniture,9401,18,Dining chair,"furniture, diningchair, dining chair",DEMO_MASTER
+DEMO054,Sofa,Furniture,9401,18,Sofa/seating furniture,"sofa, furniture",DEMO_MASTER
+DEMO055,Wooden Table,Furniture,9403,18,Wooden table,"wooden table, furniture, woodentable",DEMO_MASTER
+DEMO056,Office Table,Furniture,9403,18,Office table,"furniture, officetable, office table",DEMO_MASTER
+DEMO057,Bookshelf,Furniture,9403,18,Book storage furniture,"furniture, bookshelf",DEMO_MASTER
+DEMO058,Bed,Furniture,9403,18,Bedroom furniture,"furniture, bed",DEMO_MASTER
+DEMO059,Mattress,Furniture,9404,18,Mattress/bedding article,"furniture, mattress",DEMO_MASTER
+DEMO060,Curtains,Home Furnishing,6303,12,Curtains and interior furnishing textile,"home furnishing, curtains",DEMO_MASTER
+DEMO061,Cotton T-Shirt,Apparel,6109,5,Knitted cotton T-shirt; rate can depend on applicable value/classification,"cotton t-shirt, cottont-shirt, apparel",DEMO_MASTER
+DEMO062,Cotton Shirt,Apparel,6205,5,Cotton shirt; rate can depend on applicable value/classification,"cottonshirt, cotton shirt, apparel",DEMO_MASTER
+DEMO063,Cotton Trousers,Apparel,6203,5,Cotton trousers; rate can depend on applicable value/classification,"cotton trousers, cottontrousers, apparel",DEMO_MASTER
+DEMO064,Jeans,Apparel,6203,5,Denim trousers; rate can depend on applicable value/classification,"apparel, jeans",DEMO_MASTER
+DEMO065,Saree,Apparel,5007,5,Woven silk saree heading; constituent may change classification,"saree, apparel",DEMO_MASTER
+DEMO066,Wool Sweater,Apparel,6110,5,Knitted sweater; classification/rate may vary,"woolsweater, wool sweater, apparel",DEMO_MASTER
+DEMO067,Cotton Socks,Apparel,6115,5,Knitted socks,"apparel, cottonsocks, cotton socks",DEMO_MASTER
+DEMO068,School Uniform,Apparel,6203,5,School uniform garment; classification depends on garment type,"schooluniform, apparel, school uniform",DEMO_MASTER
+DEMO069,Bed Sheet,Home Textiles,6302,5,Bed linen/textile furnishing,"bed sheet, home textiles, bedsheet",DEMO_MASTER
+DEMO070,Towel,Home Textiles,6302,5,Cotton towel,"home textiles, towel",DEMO_MASTER
+DEMO071,Packaged Biscuits,Food,1905,18,Biscuits/bakery preparation,"packagedbiscuits, packaged biscuits, food",DEMO_MASTER
+DEMO072,Bread,Food,1905,0,Bread; treatment can depend on product/packaging conditions,"bread, food",DEMO_MASTER
+DEMO073,Chocolate,Food,1806,18,Chocolate and cocoa preparation,"chocolate, food",DEMO_MASTER
+DEMO074,Cocoa Powder,Food,1805,18,Cocoa powder without added sugar,"cocoa powder, cocoapowder, food",DEMO_MASTER
+DEMO075,Corn Flakes,Food,1904,18,Prepared cereal food,"corn flakes, food, cornflakes",DEMO_MASTER
+DEMO076,Instant Coffee,Food,2101,18,Coffee extract/preparation,"instant coffee, instantcoffee, food",DEMO_MASTER
+DEMO077,Tea,Food,0902,5,Tea,"tea, food",DEMO_MASTER
+DEMO078,Coffee Beans,Food,0901,5,Coffee,"coffee beans, coffeebeans, food",DEMO_MASTER
+DEMO079,Pasta,Food,1902,5,Pasta preparation,"pasta, food",DEMO_MASTER
+DEMO080,Noodles,Food,1902,5,Noodles/pasta preparation,"noodles, food",DEMO_MASTER
+DEMO081,Tomato Ketchup,Food,2103,12,Sauce/ketchup,"tomatoketchup, tomato ketchup, food",DEMO_MASTER
+DEMO082,Mixed Pickle,Food,2001,12,Prepared/preserved vegetable product,"mixed pickle, mixedpickle, food",DEMO_MASTER
+DEMO083,Fruit Juice,Food,2009,12,Fruit/vegetable juice,"fruitjuice, fruit juice, food",DEMO_MASTER
+DEMO084,Mineral Water,Food,2201,18,Packaged water; exact treatment depends on product conditions,"mineralwater, mineral water, food",DEMO_MASTER
+DEMO085,Packaged Milk,Food,0401,0,Milk; UHT and packaged/labelled conditions can affect treatment,"packagedmilk, food, packaged milk",DEMO_MASTER
+DEMO086,Toothpaste,Personal Care,3306,18,Dental hygiene preparation,"personal care, toothpaste",DEMO_MASTER
+DEMO087,Shampoo,Personal Care,3305,18,Hair-care preparation,"shampoo, personal care",DEMO_MASTER
+DEMO088,Face Cream,Personal Care,3304,18,Skin-care preparation,"personal care, facecream, face cream",DEMO_MASTER
+DEMO089,Sunscreen,Personal Care,3304,18,Skin-care preparation,"personal care, sunscreen",DEMO_MASTER
+DEMO090,Perfume,Personal Care,3303,18,Perfume/toilet water,"personal care, perfume",DEMO_MASTER
+DEMO091,Deodorant,Personal Care,3307,18,Personal deodorant/toilet preparation,"personal care, deodorant",DEMO_MASTER
+DEMO092,Soap Bar,Personal Care,3401,18,Soap in bar/cake/form,"personal care, soapbar, soap bar",DEMO_MASTER
+DEMO093,Toothbrush,Personal Care,9603,18,Toothbrush,"personal care, toothbrush",DEMO_MASTER
+DEMO094,Hair Comb,Personal Care,9615,18,Comb/hair accessory,"personal care, haircomb, hair comb",DEMO_MASTER
+DEMO095,Nail Polish,Personal Care,3304,28,Nail polish,"nailpolish, personal care, nail polish",DEMO_MASTER
+DEMO096,Notebook,Stationery,4820,12,Paper notebook,"stationery, notebook",DEMO_MASTER
+DEMO097,Register,Stationery,4820,12,Paper register,"register, stationery",DEMO_MASTER
+DEMO098,Printed Book,Books,4901,0,Printed book,"printedbook, books, printed book",DEMO_MASTER
+DEMO099,Newspaper,Books,4902,0,Newspaper,"books, newspaper",DEMO_MASTER
+DEMO100,Ball Pen,Stationery,9608,18,Ball-point pen,"stationery, ball pen, ballpen",DEMO_MASTER

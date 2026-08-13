@@ -14,13 +14,24 @@ from ai.fallback import fallback_response
 from engines.knowledge_engine import build_context
 from engines.registration_engine import registration_summary
 from engines.engine_router import EngineRouter
-from engines.gst_engine import product_gst, product_gst_multiple
+
+from engines.gst_engine import (
+    product_gst,
+    product_gst_multiple,
+    search_external_gst_data,
+)
 
 from repositories.business_profile import (
     BusinessProfileRepository,
 )
 
 from services.search import universal_search
+
+# =========================================================
+# PRODUCT MASTER
+# =========================================================
+
+from models.product_master import ProductMaster
 
 
 class AIManager:
@@ -68,7 +79,7 @@ class AIManager:
             "tax on",
             "tax for",
 
-            # HSN + GST combined
+            # HSN + GST
             "hsn and gst",
             "hsn + gst",
             "hsn & gst",
@@ -91,32 +102,9 @@ class AIManager:
         question: str,
     ) -> str:
 
-        """
-        Examples:
-
-            HSN code of shirt
-            -> shirt
-
-            HSN code for shirt
-            -> shirt
-
-            HSN on shirt
-            -> shirt
-
-            HSN code for cotton shirt
-            -> cotton shirt
-
-            What is the HSN of jeans?
-            -> jeans
-        """
-
         q = (
             question or ""
         ).lower().strip()
-
-        # -----------------------------------------------------
-        # Remove common HSN phrases
-        # -----------------------------------------------------
 
         patterns = [
 
@@ -150,10 +138,6 @@ class AIManager:
                 q,
                 flags=re.IGNORECASE,
             )
-
-        # -----------------------------------------------------
-        # Remove remaining question words
-        # -----------------------------------------------------
 
         stop_words = {
             "what",
@@ -200,44 +184,24 @@ class AIManager:
         question: str,
     ) -> str:
 
-        """
-        Examples:
-
-            GST on shirt
-            -> shirt
-
-            GST rate for laptop
-            -> laptop
-
-            GST of t shirt
-            -> t shirt
-
-            HSN and GST of shirt
-            -> shirt
-        """
-
         q = (
             question or ""
         ).lower().strip()
 
         patterns = [
 
-            # What is GST on shirt?
             r"\bwhat(?:'s| is)\s+(?:the\s+)?gst"
             r"(?:\s+rate|\s+percentage|\s+%)?"
             r"\s+(?:of|for|on)\s+",
 
-            # GST on shirt
             r"\bgst"
             r"(?:\s+rate|\s+percentage|\s+%)?"
             r"\s+(?:of|for|on)\s+",
 
-            # Tax on shirt
             r"\btax"
             r"(?:\s+rate|\s+percentage|\s+%)?"
             r"\s+(?:of|for|on)\s+",
 
-            # HSN and GST of shirt
             r"\bhsn"
             r"(?:\s+code)?"
             r"\s+(?:and|with|\+|&)\s+gst"
@@ -252,10 +216,6 @@ class AIManager:
                 q,
                 flags=re.IGNORECASE,
             )
-
-        # -----------------------------------------------------
-        # Remove remaining words
-        # -----------------------------------------------------
 
         stop_words = {
             "what",
@@ -294,6 +254,187 @@ class AIManager:
         return " ".join(words).strip()
 
     # =========================================================
+    # DIRECT PRODUCT MASTER SEARCH
+    # =========================================================
+
+    @staticmethod
+    def direct_product_gst_search(
+        product_name: str,
+        db: Session,
+    ):
+
+        query = (
+            product_name or ""
+        ).strip().lower()
+
+        if not query:
+            return None
+
+        # -----------------------------------------------------
+        # EXACT MATCH
+        # -----------------------------------------------------
+
+        product = (
+            db.query(ProductMaster)
+            .filter(
+                ProductMaster.product_name.ilike(
+                    product_name.strip()
+                )
+            )
+            .first()
+        )
+
+        if product:
+            return product
+
+        # -----------------------------------------------------
+        # CONTAINS MATCH
+        # -----------------------------------------------------
+
+        product = (
+            db.query(ProductMaster)
+            .filter(
+                ProductMaster.product_name.ilike(
+                    f"%{query}%"
+                )
+            )
+            .first()
+        )
+
+        if product:
+            return product
+
+        # -----------------------------------------------------
+        # WORD BASED SEARCH
+        # -----------------------------------------------------
+
+        words = [
+            word
+            for word in re.findall(
+                r"[a-zA-Z0-9]+",
+                query,
+            )
+            if len(word) >= 2
+        ]
+
+        if not words:
+            return None
+
+        products = (
+            db.query(ProductMaster)
+            .filter(
+                ProductMaster.is_active == True
+            )
+            .all()
+        )
+
+        best_product = None
+        best_score = 0
+
+        for item in products:
+
+            name = (
+                item.product_name or ""
+            ).lower()
+
+            score = 0
+
+            # Exact query inside product name
+            if query in name:
+                score += 5
+
+            # Individual words
+            for word in words:
+
+                if word in name:
+                    score += 2
+
+            if score > best_score:
+
+                best_score = score
+                best_product = item
+
+        if best_score > 0:
+            return best_product
+
+        return None
+
+    # =========================================================
+    # DIRECT PRODUCT RESPONSE
+    # =========================================================
+
+    @staticmethod
+    def build_direct_product_response(
+        product,
+    ):
+
+        if product is None:
+
+            return {
+                "answer": (
+                    "I could not find this product "
+                    "in the TaxSarthi Product Master."
+                )
+            }
+
+        gst_rate = (
+            product.gst_rate
+            if product.gst_rate is not None
+            else 0
+        )
+
+        cgst = gst_rate / 2
+        sgst = gst_rate / 2
+
+        category_name = "N/A"
+
+        try:
+
+            if product.category:
+
+                category_name = (
+                    product.category.name
+                )
+
+        except Exception:
+
+            category_name = "N/A"
+
+        lines = [
+            (
+                f"**{product.product_name} "
+                f"— GST & HSN Details**"
+            ),
+            "",
+            f"**HSN Code:** "
+            f"{product.hsn_code or 'N/A'}",
+            f"**Category:** {category_name}",
+            f"**GST Rate:** {gst_rate:g}%",
+            f"**CGST:** {cgst:g}%",
+            f"**SGST:** {sgst:g}%",
+        ]
+
+        if product.description:
+
+            lines.extend([
+                "",
+                f"**Description:** "
+                f"{product.description}",
+            ])
+
+        lines.extend([
+            "",
+            (
+                "This information is from the "
+                "TaxSarthi Product Master database."
+            ),
+        ])
+
+        return {
+            "answer": "\n".join(lines)
+        }
+
+    # =========================================================
     # FORMAT HSN RESULT
     # =========================================================
 
@@ -308,10 +449,6 @@ class AIManager:
             [],
         )
 
-        # -----------------------------------------------------
-        # No result
-        # -----------------------------------------------------
-
         if not hsn_results:
 
             return {
@@ -322,10 +459,6 @@ class AIManager:
                     f"such as material, fabric and product type."
                 )
             }
-
-        # -----------------------------------------------------
-        # Remove duplicates
-        # -----------------------------------------------------
 
         unique = {}
 
@@ -347,23 +480,15 @@ class AIManager:
 
                 unique[code] = description
 
-        # -----------------------------------------------------
-        # Limit results
-        # -----------------------------------------------------
-
         matches = list(
             unique.items()
         )[:10]
 
-        # -----------------------------------------------------
-        # Build response
-        # -----------------------------------------------------
-
         lines = []
 
         lines.append(
-            "I found the following matching HSN records "
-            "in the TaxSarthi HSN database:"
+            "I found the following matching HSN "
+            "records in the TaxSarthi HSN database:"
         )
 
         lines.append("")
@@ -402,10 +527,6 @@ class AIManager:
         result: dict,
     ):
 
-        # -----------------------------------------------------
-        # GST lookup failed
-        # -----------------------------------------------------
-
         if not result.get(
             "success",
             False,
@@ -420,10 +541,6 @@ class AIManager:
                     ),
                 )
             }
-
-        # -----------------------------------------------------
-        # Multiple classifications
-        # -----------------------------------------------------
 
         if result.get(
             "classification_required",
@@ -459,10 +576,6 @@ class AIManager:
             return {
                 "answer": "\n".join(lines)
             }
-
-        # -----------------------------------------------------
-        # Single classification
-        # -----------------------------------------------------
 
         hsn = result.get(
             "hsn",
@@ -561,7 +674,11 @@ class AIManager:
         result: dict,
     ):
 
-        if not result.get("success", False):
+        if not result.get(
+            "success",
+            False,
+        ):
+
             return {
                 "answer": result.get(
                     "message",
@@ -569,11 +686,16 @@ class AIManager:
                 )
             }
 
-        products = result.get("products", [])
+        products = result.get(
+            "products",
+            [],
+        )
 
         if not products:
+
             return {
-                "answer": "No product GST information was found."
+                "answer":
+                    "No product GST information was found."
             }
 
         lines = [
@@ -588,16 +710,29 @@ class AIManager:
                 "Product",
             )
 
-            if not item.get("success", False):
+            if not item.get(
+                "success",
+                False,
+            ):
 
                 lines.extend([
                     f"**{product.title()}**",
-                    f"❌ {item.get('message', 'No information found.')}",
+                    (
+                        f"❌ "
+                        f"{item.get(
+                            'message',
+                            'No information found.'
+                        )}"
+                    ),
                     "",
                 ])
+
                 continue
 
-            if item.get("classification_required", False):
+            if item.get(
+                "classification_required",
+                False,
+            ):
 
                 lines.extend([
                     f"**{product.title()}**",
@@ -616,24 +751,51 @@ class AIManager:
                     )
 
                 lines.append("")
+
                 continue
 
             lines.extend([
                 f"**{product.title()}**",
-                f"• HSN Code: {item.get('hsn', 'N/A')}",
-                f"• Description: {item.get('hsn_description', '')}",
-                f"• GST Rate: {item.get('gst_rate', 0)}%",
-                f"• CGST: {item.get('cgst', 0)}%",
-                f"• SGST: {item.get('sgst', 0)}%",
-                f"• IGST: {item.get('igst', 0)}%",
+                (
+                    f"• HSN Code: "
+                    f"{item.get('hsn', 'N/A')}"
+                ),
+                (
+                    f"• Description: "
+                    f"{item.get('hsn_description', '')}"
+                ),
+                (
+                    f"• GST Rate: "
+                    f"{item.get('gst_rate', 0)}%"
+                ),
+                (
+                    f"• CGST: "
+                    f"{item.get('cgst', 0)}%"
+                ),
+                (
+                    f"• SGST: "
+                    f"{item.get('sgst', 0)}%"
+                ),
+                (
+                    f"• IGST: "
+                    f"{item.get('igst', 0)}%"
+                ),
             ])
 
-            if item.get("cess", 0):
+            if item.get(
+                "cess",
+                0,
+            ):
+
                 lines.append(
-                    f"• Cess: {item.get('cess')}%"
+                    f"• Cess: "
+                    f"{item.get('cess')}%"
                 )
 
-            if item.get("notification_no"):
+            if item.get(
+                "notification_no"
+            ):
+
                 lines.append(
                     f"• Source/Notification: "
                     f"{item.get('notification_no')}"
@@ -646,6 +808,57 @@ class AIManager:
             "HSN and GST records available in the "
             "TaxSarthi database."
         )
+
+        return {
+            "answer": "\n".join(lines)
+        }
+
+    # =========================================================
+    # FILE HSN RESPONSE
+    # =========================================================
+
+    @staticmethod
+    def build_file_hsn_response(
+        search_term: str,
+        result: dict,
+    ):
+
+        options = result.get(
+            "hsn_options",
+            [],
+        )
+
+        if not options:
+
+            return {
+                "answer": (
+                    f"I could not find a matching HSN "
+                    f"record for '{search_term}'."
+                )
+            }
+
+        lines = [
+            "I found these HSN/GST classifications "
+            "in the TaxSarthi master data:",
+            "",
+        ]
+
+        for option in options[:10]:
+
+            lines.append(
+                f"• HSN {option.get('hsn')} — "
+                f"{option.get('description')} — "
+                f"GST {option.get('gst_rate')}%"
+            )
+
+        lines.extend([
+            "",
+            (
+                "For an exact classification, product "
+                "material, composition and product type "
+                "may be required."
+            ),
+        ])
 
         return {
             "answer": "\n".join(lines)
@@ -676,7 +889,8 @@ class AIManager:
                 "success": False,
                 "intent": "general",
                 "response": {
-                    "answer": "Please enter a question."
+                    "answer":
+                        "Please enter a question."
                 },
             }
 
@@ -721,6 +935,7 @@ class AIManager:
             current_context = {}
 
         if current_context is None:
+
             current_context = {}
 
         # =====================================================
@@ -728,14 +943,20 @@ class AIManager:
         # =====================================================
 
         try:
-            extracted_entities = extract_entities(
-                question
+
+            extracted_entities = (
+                extract_entities(
+                    question
+                )
             )
+
         except Exception as e:
+
             print(
                 "Entity Extraction Error:",
                 e,
             )
+
             extracted_entities = {
                 "question": question,
                 "product_names": [],
@@ -744,12 +965,17 @@ class AIManager:
                 "interstate": False,
             }
 
-        if not isinstance(current_context, dict):
+        if not isinstance(
+            current_context,
+            dict,
+        ):
+
             current_context = {}
 
         current_context.update(
             extracted_entities
         )
+
         current_context["question"] = question
 
         # =====================================================
@@ -787,14 +1013,13 @@ class AIManager:
         # =====================================================
         # DIRECT GST SEARCH
         #
-        # MUST COME BEFORE HSN SEARCH
+        # FIRST:
+        # ProductMaster
         #
-        # Example:
+        # SECOND:
+        # Existing GST engine
         #
-        # HSN and GST of shirt
-        #
-        # contains "HSN", but we want the combined
-        # GST engine to handle it.
+        # GEMINI IS NOT USED FOR PRODUCT MASTER
         # =====================================================
 
         if AIManager.is_gst_query(
@@ -822,16 +1047,204 @@ class AIManager:
                     )
 
                 # -------------------------------------------------
-                # GST ENGINE
+                # PRODUCT NAMES FROM CONTEXT
                 # -------------------------------------------------
 
-                product_names = current_context.get(
-                    "product_names",
-                    [],
+                product_names = (
+                    current_context.get(
+                        "product_names",
+                        [],
+                    )
                 )
 
-                if not product_names and product_name:
-                    product_names = [product_name]
+                if (
+                    not product_names
+                    and product_name
+                ):
+
+                    product_names = [
+                        product_name
+                    ]
+
+                # -------------------------------------------------
+                # MULTIPLE PRODUCTS
+                # -------------------------------------------------
+
+                if len(product_names) > 1:
+
+                    direct_results = []
+
+                    for name in product_names:
+
+                        product = (
+                            AIManager.direct_product_gst_search(
+                                product_name=name,
+                                db=db,
+                            )
+                        )
+
+                        if product:
+
+                            direct_results.append(
+                                {
+                                    "product":
+                                        product.product_name,
+                                    "success":
+                                        True,
+                                    "hsn":
+                                        product.hsn_code,
+                                    "gst_rate":
+                                        product.gst_rate,
+                                    "cgst":
+                                        (
+                                            product.gst_rate / 2
+                                            if product.gst_rate
+                                            is not None
+                                            else 0
+                                        ),
+                                    "sgst":
+                                        (
+                                            product.gst_rate / 2
+                                            if product.gst_rate
+                                            is not None
+                                            else 0
+                                        ),
+                                    "igst":
+                                        product.gst_rate or 0,
+                                    "hsn_description":
+                                        product.description or "",
+                                }
+                            )
+
+                        else:
+
+                            direct_results.append(
+                                {
+                                    "product": name,
+                                    "success": False,
+                                    "message":
+                                        "Product not found in Product Master.",
+                                }
+                            )
+
+                    direct_multi_result = {
+                        "success": True,
+                        "products": direct_results,
+                        "source":
+                            "product_master",
+                    }
+
+                    response = (
+                        AIManager.build_multiple_gst_response(
+                            direct_multi_result
+                        )
+                    )
+
+                    return {
+                        "success": True,
+                        "intent": "gst",
+                        "context": {
+                            "source":
+                                "product_master",
+                            "products":
+                                product_names,
+                        },
+                        "response": response,
+                    }
+
+                # -------------------------------------------------
+                # SINGLE PRODUCT
+                # -------------------------------------------------
+
+                direct_product = (
+                    AIManager.direct_product_gst_search(
+                        product_name=product_name,
+                        db=db,
+                    )
+                )
+
+                print(
+                    "🔎 Direct Product:",
+                    (
+                        direct_product.product_name
+                        if direct_product
+                        else "NOT FOUND"
+                    ),
+                )
+
+                # -------------------------------------------------
+                # PRODUCT FOUND
+                # -------------------------------------------------
+
+                if direct_product:
+
+                    response = (
+                        AIManager.build_direct_product_response(
+                            direct_product
+                        )
+                    )
+
+                    gst_result = {
+                        "success": True,
+                        "source":
+                            "product_master",
+                        "product":
+                            direct_product.product_name,
+                        "hsn":
+                            direct_product.hsn_code,
+                        "gst_rate":
+                            direct_product.gst_rate,
+                    }
+
+                    print(
+                        "💰 Product Master GST Result:",
+                        gst_result,
+                    )
+
+                    if user_id is not None:
+
+                        try:
+
+                            save_chat(
+                                db=db,
+                                user_id=user_id,
+                                question=question,
+                                answer=response.get(
+                                    "answer",
+                                    "",
+                                ),
+                            )
+
+                        except Exception as e:
+
+                            print(
+                                "Save Chat Error:",
+                                e,
+                            )
+
+                    return {
+                        "success": True,
+                        "intent": "gst",
+                        "context": {
+                            "product":
+                                direct_product.product_name,
+                            "gst_result":
+                                gst_result,
+                            "source":
+                                "product_master",
+                        },
+                        "response": response,
+                    }
+
+                # -------------------------------------------------
+                # PRODUCT NOT FOUND
+                #
+                # Try old GST engine
+                # -------------------------------------------------
+
+                print(
+                    "⚠ Product not found in ProductMaster."
+                )
 
                 amount = float(
                     current_context.get(
@@ -848,89 +1261,28 @@ class AIManager:
                     )
                 )
 
-                if len(product_names) > 1:
-
-                    gst_result = product_gst_multiple(
-                        products=product_names,
-                        amount=amount,
-                        interstate=interstate,
-                        db=db,
-                    )
-
-                    response = (
-                        AIManager.build_multiple_gst_response(
-                            gst_result
-                        )
-                    )
-
-                    print(
-                        "💰 Multiple GST Result:",
-                        gst_result,
-                    )
-
-                else:
-
-                    product_name = (
-                        product_names[0]
-                        if product_names
-                        else product_name
-                    )
-
-                    gst_result = product_gst(
-                        product_name=product_name,
-                        amount=amount,
-                        interstate=interstate,
-                        db=db,
-                    )
-
-                    response = (
-                        AIManager.build_gst_response(
-                            product=product_name,
-                            result=gst_result,
-                        )
-                    )
-
-                    print(
-                        "💰 GST Result:",
-                        gst_result,
-                    )
-
-                print(
-                    "💰 GST Result:",
-                    gst_result,
+                gst_result = product_gst(
+                    product_name=product_name,
+                    amount=amount,
+                    interstate=interstate,
+                    db=db,
                 )
 
-                # -------------------------------------------------
-                # Save Chat
-                # -------------------------------------------------
-
-                if user_id is not None:
-
-                    try:
-
-                        save_chat(
-                            db=db,
-                            user_id=user_id,
-                            question=question,
-                            answer=response.get(
-                                "answer",
-                                "",
-                            ),
-                        )
-
-                    except Exception as e:
-
-                        print(
-                            "Save Chat Error:",
-                            e,
-                        )
+                response = (
+                    AIManager.build_gst_response(
+                        product=product_name,
+                        result=gst_result,
+                    )
+                )
 
                 return {
                     "success": True,
                     "intent": "gst",
                     "context": {
-                        "product": product_name,
-                        "gst_result": gst_result,
+                        "product":
+                            product_name,
+                        "gst_result":
+                            gst_result,
                     },
                     "response": response,
                 }
@@ -942,7 +1294,24 @@ class AIManager:
                     e,
                 )
 
-                # Continue normal AI pipeline
+                # -------------------------------------------------
+                # IMPORTANT:
+                # Do NOT allow GST query to hang.
+                # Return a useful response.
+                # -------------------------------------------------
+
+                return {
+                    "success": False,
+                    "intent": "gst",
+                    "context": {},
+                    "response": {
+                        "answer": (
+                            "I could not process the GST "
+                            "product lookup right now. "
+                            "Please try the product name again."
+                        )
+                    },
+                }
 
         # =====================================================
         # DIRECT HSN SEARCH
@@ -970,10 +1339,6 @@ class AIManager:
                     search_term,
                 )
 
-                # -------------------------------------------------
-                # No product found
-                # -------------------------------------------------
-
                 if not search_term:
 
                     raise ValueError(
@@ -982,7 +1347,7 @@ class AIManager:
                     )
 
                 # -------------------------------------------------
-                # Search HSN database
+                # SEARCH DATABASE
                 # -------------------------------------------------
 
                 search_result = (
@@ -1003,7 +1368,51 @@ class AIManager:
                 )
 
                 # -------------------------------------------------
-                # Format response
+                # FALLBACK
+                # -------------------------------------------------
+
+                if not search_result.get(
+                    "hsn"
+                ):
+
+                    file_result = (
+                        search_external_gst_data(
+                            product_name=search_term,
+                            amount=0,
+                            interstate=False,
+                        )
+                    )
+
+                    if file_result:
+
+                        response = (
+                            AIManager.build_file_hsn_response(
+                                search_term,
+                                file_result,
+                            )
+                        )
+
+                        return {
+                            "success": True,
+                            "intent": "hsn",
+                            "context": {
+                                "search": {
+                                    "source":
+                                        "gst_hsn_files",
+                                    "total_results":
+                                        len(
+                                            file_result.get(
+                                                "hsn_options",
+                                                [],
+                                            )
+                                        ),
+                                }
+                            },
+                            "response": response,
+                        }
+
+                # -------------------------------------------------
+                # FORMAT
                 # -------------------------------------------------
 
                 response = (
@@ -1013,54 +1422,30 @@ class AIManager:
                     )
                 )
 
-                # -------------------------------------------------
-                # Save Chat
-                # -------------------------------------------------
-
-                if user_id is not None:
-
-                    try:
-
-                        save_chat(
-                            db=db,
-                            user_id=user_id,
-                            question=question,
-                            answer=response.get(
-                                "answer",
-                                "",
-                            ),
-                        )
-
-                    except Exception as e:
-
-                        print(
-                            "Save Chat Error:",
-                            e,
-                        )
-
                 return {
                     "success": True,
                     "intent": "hsn",
                     "context": {
                         "search": {
-                            "total_results": (
+                            "total_results":
                                 search_result.get(
                                     "total_results",
                                     0,
-                                )
-                            ),
+                                ),
                             "hsn_results": [
                                 {
-                                    "hsn_code": getattr(
-                                        x,
-                                        "hsn_code",
-                                        "",
-                                    ),
-                                    "description": getattr(
-                                        x,
-                                        "description",
-                                        "",
-                                    ),
+                                    "hsn_code":
+                                        getattr(
+                                            x,
+                                            "hsn_code",
+                                            "",
+                                        ),
+                                    "description":
+                                        getattr(
+                                            x,
+                                            "description",
+                                            "",
+                                        ),
                                 }
                                 for x in search_result.get(
                                     "hsn",
@@ -1105,10 +1490,6 @@ class AIManager:
 
             engine_result = {}
 
-        # =====================================================
-        # NORMALIZE ENGINE RESULT
-        # =====================================================
-
         if engine_result is None:
 
             engine_result = {}
@@ -1136,10 +1517,6 @@ class AIManager:
                 )
 
                 result = {}
-
-            # =================================================
-            # EXTRACT REGISTRATION RESULT
-            # =================================================
 
             registration_status = result.get(
                 "registration_status",
@@ -1191,10 +1568,6 @@ class AIManager:
                 [],
             )
 
-            # =================================================
-            # BUILD USER-FRIENDLY RESPONSE
-            # =================================================
-
             lines = []
 
             if registration_required:
@@ -1221,27 +1594,42 @@ class AIManager:
 
             lines.append("")
 
-            # =================================================
-            # BUSINESS DETAILS
-            # =================================================
-
             try:
-                turnover_text = f"₹{float(turnover):,.2f}"
-            except (TypeError, ValueError):
-                turnover_text = str(turnover)
+
+                turnover_text = (
+                    f"₹{float(turnover):,.2f}"
+                )
+
+            except (
+                TypeError,
+                ValueError,
+            ):
+
+                turnover_text = str(
+                    turnover
+                )
 
             lines.append(
-                f"Annual turnover: {turnover_text}"
+                f"Annual turnover: "
+                f"{turnover_text}"
             )
 
             lines.append(
                 "Inter-State supply: "
-                + ("Yes" if interstate else "No")
+                + (
+                    "Yes"
+                    if interstate
+                    else "No"
+                )
             )
 
             lines.append(
                 "E-commerce: "
-                + ("Yes" if ecommerce else "No")
+                + (
+                    "Yes"
+                    if ecommerce
+                    else "No"
+                )
             )
 
             lines.append(
@@ -1255,10 +1643,6 @@ class AIManager:
 
             lines.append("")
 
-            # =================================================
-            # REASONS
-            # =================================================
-
             if reasons:
 
                 lines.append("Why:")
@@ -1270,10 +1654,6 @@ class AIManager:
                     )
 
                 lines.append("")
-
-            # =================================================
-            # COMPOSITION SCHEME
-            # =================================================
 
             if composition_eligible:
 
@@ -1292,10 +1672,6 @@ class AIManager:
 
                 lines.append("")
 
-            # =================================================
-            # RECOMMENDATIONS
-            # =================================================
-
             if recommendations:
 
                 lines.append(
@@ -1312,10 +1688,6 @@ class AIManager:
                     )
 
                 lines.append("")
-
-            # =================================================
-            # REGISTRATION PROCESS
-            # =================================================
 
             if process:
 
@@ -1335,14 +1707,13 @@ class AIManager:
                 lines.append("")
 
             lines.append(
-                "Official GST Portal: https://www.gst.gov.in/"
+                "Official GST Portal: "
+                "https://www.gst.gov.in/"
             )
 
-            answer = "\n".join(lines)
-
-            # =================================================
-            # SAVE REGISTRATION CHAT
-            # =================================================
+            answer = "\n".join(
+                lines
+            )
 
             if user_id is not None:
 
@@ -1364,9 +1735,11 @@ class AIManager:
 
             return {
                 "success": True,
-                "intent": "registration",
+                "intent":
+                    "registration",
                 "response": {
-                    "answer": answer,
+                    "answer":
+                        answer
                 },
             }
 
@@ -1392,10 +1765,6 @@ class AIManager:
             )
 
             knowledge = {}
-
-        # =====================================================
-        # SAFE DEFAULTS
-        # =====================================================
 
         if knowledge is None:
 
@@ -1523,15 +1892,12 @@ class AIManager:
                 )
 
                 response = {
-                    "answer": gemini.get(
-                        "response",
-                        "",
-                    )
+                    "answer":
+                        gemini.get(
+                            "response",
+                            "",
+                        )
                 }
-
-            # -------------------------------------------------
-            # Empty response fallback
-            # -------------------------------------------------
 
             if not response.get(
                 "answer"
@@ -1552,7 +1918,8 @@ class AIManager:
                 )
 
                 response = {
-                    "answer": fallback_answer
+                    "answer":
+                        fallback_answer
                 }
 
         # =====================================================
@@ -1576,7 +1943,8 @@ class AIManager:
             )
 
             response = {
-                "answer": fallback_answer
+                "answer":
+                    fallback_answer
             }
 
         # =====================================================
