@@ -3,7 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from core.database import Base, engine
 
-# Models
+# =====================================================
+# MODELS
+# =====================================================
+
 from models.user import User
 from models.category import Category
 from models.product_master import ProductMaster
@@ -15,7 +18,10 @@ from models.notification import Notification
 from models.circular import Circular
 
 
-# Routers
+# =====================================================
+# ROUTERS
+# =====================================================
+
 from routes.auth import router as auth_router
 from routes.health import router as health_router
 from routes.category import router as category_router
@@ -41,6 +47,7 @@ from routes.returns_advisor import router as returns_router
 from dashboard.routes import router as dashboard_router
 from routes.chat import router as chat_router
 
+
 # =====================================================
 # DATABASE
 # =====================================================
@@ -63,12 +70,19 @@ app = FastAPI(
 # CORS
 # =====================================================
 
+ALLOWED_ORIGINS = [
+    # Local development
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+
+    # Production frontend
+    "https://tax-sarthi-ai.vercel.app",
+]
+
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-    ],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -97,7 +111,6 @@ app.include_router(business_profile_router)
 app.include_router(document.router)
 app.include_router(invoice_analysis.router)
 
-# New / important routes
 app.include_router(notification_router)
 app.include_router(circular_router)
 app.include_router(search_router)
@@ -111,13 +124,13 @@ app.include_router(returns_router)
 app.include_router(dashboard_router)
 app.include_router(chat_router)
 
+
 # =====================================================
 # HOME
 # =====================================================
 
 @app.get("/")
 def home():
-
     return {
         "project": "TaxSarthi AI",
         "version": "2.0.0",
@@ -132,7 +145,6 @@ def home():
 
 @app.get("/about")
 def about():
-
     return {
         "developer": "Nilesh Sandhu",
         "project": "TaxSarthi AI",
