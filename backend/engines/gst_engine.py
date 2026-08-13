@@ -627,10 +627,10 @@ def build_product_master_result(
             )
             or ""
         ),
-        "category": getattr(
-            product,
-            "category",
-            None,
+        "category": (
+            getattr(product.category, "name", None)
+            if getattr(product, "category", None)
+            else None
         ),
         "hsn": (
             getattr(
