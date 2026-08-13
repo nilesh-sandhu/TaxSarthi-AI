@@ -107,3 +107,4 @@ xgboost==3.3.0
 google-auth==2.56.0 
 google-genai 
 PyMuPDF 
+openpyxl 
