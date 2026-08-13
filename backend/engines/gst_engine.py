@@ -2,6 +2,8 @@ from typing import List, Union, Optional
 
 from sqlalchemy.orm import Session
 from sqlalchemy import or_, func
+from pathlib import Path
+import json
 
 from models.product_master import ProductMaster
 from models.product_alias import ProductAlias
@@ -179,14 +181,48 @@ def get_hsn(
     if hsn_code is None:
         return None
 
-    return (
+    clean_code = str(hsn_code).strip()
+
+    # 1) Try exact match
+    exact = (
         db.query(HSNMaster)
         .filter(
-            HSNMaster.hsn_code
-            == str(hsn_code).strip()
+            HSNMaster.hsn_code == clean_code
         )
         .first()
     )
+
+    if exact:
+        return exact
+
+    # 2) Fallback: prefix match (e.g., product.hsn_code=8471 matches 8471.30)
+    try:
+        prefix_match = (
+            db.query(HSNMaster)
+            .filter(
+                HSNMaster.hsn_code.ilike(f"{clean_code}%")
+            )
+            .order_by(HSNMaster.hsn_code.asc())
+            .first()
+        )
+
+        if prefix_match:
+            return prefix_match
+    except Exception:
+        # If DB backend doesn't support ilike, try basic contains
+        prefix_match = (
+            db.query(HSNMaster)
+            .filter(
+                HSNMaster.hsn_code.like(f"{clean_code}%")
+            )
+            .order_by(HSNMaster.hsn_code.asc())
+            .first()
+        )
+
+        if prefix_match:
+            return prefix_match
+
+    return None
 
 
 def get_gst_slab(
@@ -748,6 +784,71 @@ def product_gst(
                 f"for '{query}' in the TaxSarthi database."
             ),
         }
+
+    # ========================================================
+    # FALLBACK: knowledge_base JSONs
+    # ========================================================
+    # If HSN/GST not available from DB, consult local knowledge base
+    try:
+        kb_root = Path(__file__).resolve().parents[2] / "knowledge_base" / "products"
+
+        kb_hsn = kb_root / "hsn_codes.json"
+        kb_gst = kb_root / "gst_rates.json"
+
+        kb_data = {}
+
+        # Try to find a KB match by product name
+        if kb_hsn.exists():
+            with open(kb_hsn, "r", encoding="utf-8") as f:
+                entries = json.load(f)
+
+                for e in entries:
+                    if (
+                        str(e.get("product", "")).lower()
+                        == query.lower()
+                    ):
+                        kb_data.update(e)
+                        break
+
+        if not kb_data and kb_gst.exists():
+            with open(kb_gst, "r", encoding="utf-8") as f:
+                entries = json.load(f)
+
+                for e in entries:
+                    if (
+                        str(e.get("product", "")).lower()
+                        == query.lower()
+                    ):
+                        kb_data.update(e)
+                        break
+
+        if kb_data:
+            gst_rate = float(kb_data.get("gst_rate", 0) or 0)
+
+            gst_amount = float(amount) * gst_rate / 100
+
+            tax = calculate_tax(
+                amount,
+                gst_rate,
+                interstate,
+            )
+
+            return {
+                "success": True,
+                "source": "knowledge_base",
+                "product": query,
+                "hsn": kb_data.get("hsn") or kb_data.get("hsn_code") or None,
+                "hsn_description": kb_data.get("description", None),
+                "gst_rate": gst_rate,
+                "taxable_value": float(amount),
+                "gst_amount": round(gst_amount, 2),
+                "total_invoice_value": round(float(amount) + gst_amount, 2),
+                **tax,
+                "cess": 0.0,
+                "notification_no": "knowledge_base",
+            }
+    except Exception:
+        pass
 
     # ========================================================
     # STEP 3 — GST OPTIONS

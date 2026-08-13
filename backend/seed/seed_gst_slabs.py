@@ -69,6 +69,7 @@ def seed_gst_slabs():
             ):
                 continue
 
+            # Try exact HSN code first
             hsn = (
                 db.query(HSNMaster)
                 .filter(
@@ -76,6 +77,28 @@ def seed_gst_slabs():
                 )
                 .first()
             )
+
+            # If exact HSN heading not found (e.g., HSN master stores 8471.30),
+            # attempt a prefix match so a heading like '8471' matches '8471.30'
+            if not hsn:
+                try:
+                    hsn = (
+                        db.query(HSNMaster)
+                        .filter(
+                            HSNMaster.hsn_code.ilike(f"{hsn_code}%")
+                        )
+                        .order_by(HSNMaster.hsn_code.asc())
+                        .first()
+                    )
+                except Exception:
+                    hsn = (
+                        db.query(HSNMaster)
+                        .filter(
+                            HSNMaster.hsn_code.like(f"{hsn_code}%")
+                        )
+                        .order_by(HSNMaster.hsn_code.asc())
+                        .first()
+                    )
 
             if not hsn:
                 skipped += 1
