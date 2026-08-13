@@ -36,3 +36,12 @@ jobs:
       - name: Run smoke tests
         run: |
           python backend/scripts/api_smoke_test.py
+      - name: Run Playwright E2E (frontend)
+        working-directory: frontend
+        run: |
+          npm ci
+          npx playwright install --with-deps
+          # Start frontend in background
+          nohup npm run dev &
+          sleep 5
+          npx playwright test frontend/e2e --config=./playwright.config.ts || true
